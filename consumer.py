@@ -14,6 +14,8 @@ if TYPE_CHECKING:
 
 log = logging.getLogger(__name__)
 
+
+
 def process_new_message(
         ch: "BlockingChannel",
         method: "Basic.Deliver",
@@ -40,10 +42,11 @@ def process_new_message(
     )
 
 def consume_messages(channel: "BlockingChannel") -> None:
+    channel.basic_qos(prefetch_count=1)
     channel.basic_consume(
         queue=MQ_ROUTING_KEY,
         on_message_callback=process_new_message,
-        auto_ack=True,
+        #auto_ack=True,
     )
     log.warning("Waiting for messages...")
     channel.start_consuming()
